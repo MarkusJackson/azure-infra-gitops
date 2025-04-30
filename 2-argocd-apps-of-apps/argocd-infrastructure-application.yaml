@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1  # Definiert die API-Version für ArgoCD-Ressourcen
+kind: Application  # Gibt an, dass dies eine ArgoCD Application-Ressource ist
+metadata:
+  name: app-of-apps-infra  # Name der App-of-Apps-Anwendung
+  namespace: argocd  # Namespace, in dem die Application-Ressource erstellt wird (ArgoCD-Standard)
+spec:
+  project: default  # Projekt, zu dem die Anwendung gehört (default ist der Standardprojektname)
+  source:
+    repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git  # URL des Git-Repositories
+    targetRevision: HEAD  # Revision des Repositories, die verwendet wird (HEAD = neueste Version)
+    path: 3-argocd-apps  # Pfad im Repository, wo die Application-Ressourcen liegen
+  destination:
+    server: https://kubernetes.default.svc  # Ziel-Cluster (lokaler Cluster)
+    namespace: argocd  # Ziel-Namespace für die Application-Ressourcen
+  syncPolicy:
+    automated: {}  # Automatische Synchronisierung (ArgoCD übernimmt Änderungen automatisch)
+    syncOptions:
+      - CreateNamespace=true  # Erstellt den Ziel-Namespace, falls er nicht existiert
