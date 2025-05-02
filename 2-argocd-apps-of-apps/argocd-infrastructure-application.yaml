@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: infra-app-of-apps
+  name: app-of-apps-infra
   namespace: argocd
 spec:
   generators:
