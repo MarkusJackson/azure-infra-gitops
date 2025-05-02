@@ -6,14 +6,14 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: https://github.com/tektoncd/triggers.git
-      targetRevision: v0.27.0
-      path: .
+    - repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git
+      targetRevision: main
+      path: tekton-triggers
       directory:
         include: release.yaml
-    - repoURL: https://github.com/tektoncd/triggers.git
-      targetRevision: v0.27.0
-      path: .
+    - repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git
+      targetRevision: main
+      path: tekton-triggers
       directory:
         include: interceptors.yaml
   destination:
