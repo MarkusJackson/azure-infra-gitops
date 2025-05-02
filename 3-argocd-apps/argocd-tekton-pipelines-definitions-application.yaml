@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infra-tekton-pipelines-definitions
+  name: 03-infra-tekton-pipelines-definitions
   namespace: argocd
 spec:
   project: default
