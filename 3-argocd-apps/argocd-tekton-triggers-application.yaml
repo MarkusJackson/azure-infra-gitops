@@ -5,12 +5,17 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://github.com/tektoncd/triggers.git  # GitHub-Repository für Tekton Triggers
-    targetRevision: v0.27.0  # Feste Version für Stabilität
-    path: .  # Der Pfad zur release.yaml (liegt im Root des Tags)
-    directory:
-      include: release.yaml  # Nur die release.yaml anwenden
+  sources:
+    - repoURL: https://github.com/tektoncd/triggers.git
+      targetRevision: v0.27.0
+      path: .
+      directory:
+        include: release.yaml
+    - repoURL: https://github.com/tektoncd/triggers.git
+      targetRevision: v0.27.0
+      path: .
+      directory:
+        include: interceptors.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: tekton-pipelines

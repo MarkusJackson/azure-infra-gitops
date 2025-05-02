@@ -1,1 +1,0 @@
-kubectl apply -f ./argocd-apps/tekton-pipelines-application.yaml
