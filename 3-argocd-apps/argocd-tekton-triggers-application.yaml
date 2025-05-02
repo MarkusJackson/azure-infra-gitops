@@ -6,11 +6,11 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://tekton-charts.storage.googleapis.com  # Offizielles Tekton Helm Chart Repository
-    chart: tekton-triggers  # Name des Charts
-    targetRevision: 0.27.0  # Feste Version für Stabilität (prüfe die neueste Version auf https://github.com/tektoncd/triggers/releases)
-    helm:
-      releaseName: tekton-triggers
+    repoURL: https://github.com/tektoncd/triggers.git  # GitHub-Repository für Tekton Triggers
+    targetRevision: v0.27.0  # Feste Version für Stabilität
+    path: .  # Der Pfad zur release.yaml (liegt im Root des Tags)
+    directory:
+      include: release.yaml  # Nur die release.yaml anwenden
   destination:
     server: https://kubernetes.default.svc
     namespace: tekton-pipelines
