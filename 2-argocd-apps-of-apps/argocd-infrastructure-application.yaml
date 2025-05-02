@@ -1,18 +1,35 @@
-apiVersion: argoproj.io/v1alpha1  # Definiert die API-Version für ArgoCD-Ressourcen
-kind: Application  # Gibt an, dass dies eine ArgoCD Application-Ressource ist
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
 metadata:
-  name: infra-app-of-apps  # Name der App-of-Apps-Anwendung
-  namespace: argocd  # Namespace, in dem die Application-Ressource erstellt wird (ArgoCD-Standard)
+  name: infra-app-of-apps
+  namespace: argocd
 spec:
-  project: default  # Projekt, zu dem die Anwendung gehört (default ist der Standardprojektname)
-  source:
-    repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git  # URL des Git-Repositories
-    targetRevision: HEAD  # Revision des Repositories, die verwendet wird (HEAD = neueste Version)
-    path: 3-argocd-apps  # Pfad im Repository, wo die Application-Ressourcen liegen
-  destination:
-    server: https://kubernetes.default.svc  # Ziel-Cluster (lokaler Cluster)
-    namespace: argocd  # Ziel-Namespace für die Application-Ressourcen
-  syncPolicy:
-    automated: {}  # Automatische Synchronisierung (ArgoCD übernimmt Änderungen automatisch)
-    syncOptions:
-      - CreateNamespace=true  # Erstellt den Ziel-Namespace, falls er nicht existiert
+  generators:
+    - list:
+        elements:
+          - appName: tekton-pipelines
+            path: 3-argocd-apps/argocd-tekton-pipelines-application.yaml
+          - appName: tekton-triggers
+            path: 3-argocd-apps/argocd-tekton-triggers-application.yaml
+            dependsOn:
+              - tekton-pipelines
+          - appName: tekton-resources
+            path: 3-argocd-apps/argocd-tekton-resources-application.yaml
+            dependsOn:
+              - tekton-triggers
+  template:
+    metadata:
+      name: "{{appName}}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git
+        targetRevision: main
+        path: "{{path}}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: argocd
+      syncPolicy:
+        automated: {}
+        syncOptions:
+          - CreateNamespace=true
