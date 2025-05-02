@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: github-listener
+  name: hello-world-github-listener
   namespace: tekton-pipelines
 spec:
   serviceAccountName: tekton-build
@@ -11,8 +11,3 @@ spec:
         - ref: github-push-binding
       template:
         ref: pipeline-trigger-template
-      params:
-        - name: pipelineName
-          value: hello-world-microservice-pipeline
-        - name: pipelineNamespace
-          value: tekton-pipelines
