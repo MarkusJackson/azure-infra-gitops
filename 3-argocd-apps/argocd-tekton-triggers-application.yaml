@@ -8,12 +8,12 @@ spec:
   sources:
     - repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git
       targetRevision: main
-      path: tekton-triggers
+      path: 4-helm-charts-and-manifests/tekton-triggers-manifest
       directory:
         include: release.yaml
     - repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git
       targetRevision: main
-      path: tekton-triggers
+      path: 4-helm-charts-and-manifests/tekton-triggers-manifest
       directory:
         include: interceptors.yaml
   destination:
