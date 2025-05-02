@@ -1,0 +1,53 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-hello-world
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: git-url
+      type: string
+    - name: git-revision
+      type: string
+      default: "main"
+    - name: image-url
+      type: string
+    - name: image-tag
+      type: string
+      default: "latest"
+    - name: deployment-name
+      type: string
+    - name: namespace
+      type: string
+  workspaces:
+    - name: source
+  tasks:
+    - name: build-and-push
+      taskRef:
+        name: build-and-push
+      params:
+        - name: git-url
+          value: $(params.git-url)
+        - name: git-revision
+          value: $(params.git-revision)
+        - name: image-url
+          value: $(params.image-url)
+        - name: image-tag
+          value: $(params.image-tag)
+      workspaces:
+        - name: source
+          workspace: source
+    - name: update-deployment
+      runAfter:
+        - build-and-push
+      taskRef:
+        name: update-deployment
+      params:
+        - name: deployment-name
+          value: $(params.deployment-name)
+        - name: namespace
+          value: $(params.namespace)
+        - name: image-url
+          value: $(params.image-url)
+        - name: image-tag
+          value: $(params.image-tag)

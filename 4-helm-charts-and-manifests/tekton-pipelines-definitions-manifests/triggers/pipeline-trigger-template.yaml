@@ -1,0 +1,43 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: pipeline-trigger-template
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: gitrevision
+    - name: gitrepositoryurl
+    - name: image-url
+    - name: image-tag
+    - name: deployment-name
+    - name: pipelineName
+      description: The name of the pipeline to trigger
+    - name: pipelineNamespace
+      description: The namespace of the pipeline
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: pipeline-run-
+        namespace: $(params.pipelineNamespace)
+      spec:
+        pipelineRef:
+          name: $(params.pipelineName)
+        params:
+          - name: gitrevision
+            value: $(tt.params.gitrevision)
+          - name: gitrepositoryurl
+            value: $(tt.params.gitrepositoryurl)
+          - name: image-url
+            value: $(tt.params.image-url)
+          - name: image-tag
+            value: $(tt.params.image-tag)
+          - name: deployment-name
+            value: $(tt.params.deployment-name)
+          - name: namespace
+            value: $(params.pipelineNamespace)
+        workspaces:
+          - name: source
+            emptyDir: {}
+        serviceAccountName: tekton-build
+        ttlSecondsAfterFinished: 3600
