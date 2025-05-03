@@ -14,14 +14,6 @@ spec:
   steps:
     - name: update-deployment
       image: bitnami/kubectl:latest
-      securityContext:
-        runAsNonRoot: true
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
-        seccompProfile:
-          type: RuntimeDefault
       command:
         - kubectl
       args:

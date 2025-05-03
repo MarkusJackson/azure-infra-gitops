@@ -12,14 +12,6 @@ spec:
   steps:
     - name: clone-build-push
       image: gcr.io/kaniko-project/executor:latest
-      securityContext:
-        runAsNonRoot: true
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
-        seccompProfile:
-          type: RuntimeDefault
       env:
         - name: GIT_CREDENTIALS
           valueFrom:
