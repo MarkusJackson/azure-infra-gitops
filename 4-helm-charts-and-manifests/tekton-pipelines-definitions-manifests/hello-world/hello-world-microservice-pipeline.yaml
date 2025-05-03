@@ -11,6 +11,9 @@ spec:
     - name: image-tag
     - name: deployment-name
     - name: namespace
+  workspaces:
+    - name: shared-workspace
+      description: Workspace to store the cloned repository
   tasks:
     - name: build-and-push
       taskRef:
@@ -20,6 +23,9 @@ spec:
           value: "$(params.gitrepositoryurl)"
         - name: image-url
           value: "$(params.image-url)"
+      workspaces:
+        - name: source
+          workspace: shared-workspace
     - name: update-deployment
       taskRef:
         name: update-deployment
