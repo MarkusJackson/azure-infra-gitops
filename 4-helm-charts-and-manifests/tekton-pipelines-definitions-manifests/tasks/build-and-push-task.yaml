@@ -37,9 +37,23 @@ spec:
     - name: build-and-push
       image: gcr.io/kaniko-project/executor:latest
       workingDir: /workspace/source
-      command:
-        - /kaniko/executor
-      args:
-        - --context=/workspace/source
-        - --destination=$(params.image-url)
-        - --skip-tls-verify
+      script: |
+        #!/busybox/sh
+        echo "Starting Kaniko build..."
+        echo "Listing contents of /workspace/source:"
+        ls -la /workspace/source
+        echo "Checking for Dockerfile..."
+        if [ -f /workspace/source/Dockerfile ]; then
+          echo "Dockerfile found!"
+        else
+          echo "Dockerfile not found!"
+          exit 1
+        fi
+        echo "Running Kaniko build..."
+        /kaniko/executor --context=/workspace/source --destination=$(params.image-url) --skip-tls-verify
+        if [ $? -eq 0 ]; then
+          echo "Kaniko build successful!"
+        else
+          echo "Kaniko build failed with exit code $?"
+          exit 1
+        fi
