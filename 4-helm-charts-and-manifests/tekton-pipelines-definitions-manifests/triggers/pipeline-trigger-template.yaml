@@ -35,3 +35,6 @@ spec:
             value: $(tt.params.deployment-name)
           - name: namespace
             value: $(tt.params.deploymentNamespace)
+        workspaces:
+          - name: shared-workspace
+            emptyDir: {}
