@@ -12,8 +12,22 @@ spec:
   steps:
     - name: clone-build-push
       image: gcr.io/kaniko-project/executor:latest
+      securityContext:
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        seccompProfile:
+          type: RuntimeDefault
+      env:
+        - name: GIT_CREDENTIALS
+          valueFrom:
+            secretKeyRef:
+              name: git-credentials
+              key: password
       script: |
         #!/usr/bin/env sh
-        git clone $(params.git-url) /workspace/source
+        git clone https://$(GIT_CREDENTIALS)@github.com/MarkusJackson/hello-world-microservice.git /workspace/source
         cd /workspace/source
         kaniko --context=/workspace/source --destination=$(params.image-url) --skip-tls-verify
