@@ -10,8 +10,14 @@ spec:
     - name: gitrepositoryurl
       value: $(body.repository.url)
     - name: image-url
-      value: "$(body.repository.full_name):$(body.head_commit.id)"  # Beispiel: Anpassbar
+      value: "$(body.repository.full_name):$(body.head_commit.id)"
     - name: image-tag
-      value: "$(body.head_commit.id)"  # Beispiel: Anpassbar
+      value: "$(body.head_commit.id)"
     - name: deployment-name
-      value: "hello-world-deployment"  # Beispiel: Muss angepasst werden
+      value: "hello-world-deployment"
+    - name: pipelineName
+      value: "hello-world-microservice-pipeline"
+    - name: pipelineNamespace
+      value: "tekton-pipelines"
+    - name: deploymentNamespace
+      value: "hello-world"

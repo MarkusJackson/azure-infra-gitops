@@ -11,18 +11,17 @@ spec:
     - name: image-tag
     - name: deployment-name
     - name: pipelineName
-      description: The name of the pipeline to trigger
     - name: pipelineNamespace
-      description: The namespace of the pipeline
-  resourcetemplates:
+    - name: deploymentNamespace
+  resourceTemplates:
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
         generateName: pipeline-run-
-        namespace: $(params.pipelineNamespace)
+        namespace: $(tt.params.pipelineNamespace)
       spec:
         pipelineRef:
-          name: $(params.pipelineName)
+          name: $(tt.params.pipelineName)
         params:
           - name: gitrevision
             value: $(tt.params.gitrevision)
@@ -35,9 +34,4 @@ spec:
           - name: deployment-name
             value: $(tt.params.deployment-name)
           - name: namespace
-            value: $(params.pipelineNamespace)
-        workspaces:
-          - name: source
-            emptyDir: {}
-        serviceAccountName: tekton-build
-        ttlSecondsAfterFinished: 3600
+            value: $(tt.params.deploymentNamespace)
