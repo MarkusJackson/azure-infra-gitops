@@ -1,0 +1,25 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-build-eventlistener-clusterrole
+  labels:
+    app.kubernetes.io/part-of: tekton-pipelines
+rules:
+  - apiGroups: ["triggers.tekton.dev"]
+    resources: ["clustertriggerbindings", "clusterinterceptors"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-build-eventlistener-clusterbinding
+  labels:
+    app.kubernetes.io/part-of: tekton-pipelines
+subjects:
+  - kind: ServiceAccount
+    name: tekton-build
+    namespace: tekton-pipelines
+roleRef:
+  kind: ClusterRole
+  name: tekton-build-eventlistener-clusterrole
+  apiGroup: rbac.authorization.k8s.io
