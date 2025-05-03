@@ -9,17 +9,18 @@ spec:
       description: The URL of the Git repository
     - name: image-url
       description: The image name to build and push
+  podTemplate:
+    securityContext:
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      seccompProfile:
+        type: RuntimeDefault
+      capabilities:
+        drop:
+          - ALL
   steps:
     - name: clone-build-push
       image: gcr.io/kaniko-project/executor:latest
-      securityContext:
-        runAsNonRoot: true
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop:
-            - ALL
-        seccompProfile:
-          type: RuntimeDefault
       env:
         - name: GIT_CREDENTIALS
           valueFrom:
