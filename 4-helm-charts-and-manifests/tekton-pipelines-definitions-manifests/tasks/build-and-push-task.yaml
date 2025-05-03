@@ -38,10 +38,12 @@ spec:
       image: gcr.io/kaniko-project/executor:latest
       workingDir: /workspace/source
       script: |
-        #!/busybox/sh
+        #!/bin/sh
         echo "Starting Kaniko build..."
+        echo "Verifying shell..."
+        which sh || { echo "sh not found!"; exit 1; }
         echo "Listing contents of /workspace/source:"
-        ls -la /workspace/source
+        ls -la /workspace/source || { echo "Failed to list contents!"; exit 1; }
         echo "Checking for Dockerfile..."
         if [ -f /workspace/source/Dockerfile ]; then
           echo "Dockerfile found!"
