@@ -5,16 +5,21 @@ metadata:
   namespace: tekton-pipelines
 spec:
   params:
-    - name: deployment-name  # Name des Deployments (z. B. hello-world)
-      type: string
-    - name: namespace  # Ziel-Namespace (z. B. hello-world)
-      type: string
-    - name: image-url  # URL des Images (z. B. docker.io/markusjackson/hello-world-microservice)
-      type: string
-    - name: image-tag  # Neuer Tag des Images (z. B. v2.0.0)
-      type: string
+    - name: deployment
+      description: The name of the deployment to update
+    - name: image
+      description: The new image to set for the deployment
+    - name: namespace
+      description: The namespace of the deployment
   steps:
-    - name: update-deployment-image
+    - name: update-deployment
       image: bitnami/kubectl:latest
-      script: |
-        kubectl set image deployment/$(params.deployment-name) $(params.deployment-name)=$(params.image-url):$(params.image-tag) -n $(params.namespace) --record
+      command:
+        - kubectl
+      args:
+        - set
+        - image
+        - deployment/$(params.deployment)
+        - "$(params.deployment)=$(params.image)"
+        - -n
+        - "$(params.namespace)"
