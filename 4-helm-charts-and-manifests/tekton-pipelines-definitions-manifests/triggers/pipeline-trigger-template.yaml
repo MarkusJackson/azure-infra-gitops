@@ -18,7 +18,7 @@ spec:
       kind: PipelineRun
       metadata:
         generateName: pipeline-run-
-        namespace: tekton-pipelines
+        namespace: $(tt.params.pipelineNamespace)
       spec:
         pipelineRef:
           name: $(tt.params.pipelineName)

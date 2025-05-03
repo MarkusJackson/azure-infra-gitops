@@ -16,10 +16,10 @@ spec:
       taskRef:
         name: build-and-push
       params:
-        - name: image
-          value: "$(params.image-url):$(params.image-tag)"
-        - name: context
+        - name: git-url
           value: "$(params.gitrepositoryurl)"
+        - name: image-url
+          value: "$(params.image-url)"
     - name: update-deployment
       taskRef:
         name: update-deployment

@@ -1,34 +1,19 @@
 apiVersion: tekton.dev/v1beta1
-kind: Pipeline
+kind: Task
 metadata:
-  name: hello-world-microservice-pipeline
+  name: build-and-push
   namespace: tekton-pipelines
 spec:
   params:
-    - name: gitrevision
-    - name: gitrepositoryurl
+    - name: git-url
+      description: The URL of the Git repository
     - name: image-url
-    - name: image-tag
-    - name: deployment-name
-    - name: namespace
-  tasks:
-    - name: build-and-push
-      taskRef:
-        name: build-and-push
-      params:
-        - name: git-url
-          value: "$(params.gitrepositoryurl)"
-        - name: image-url
-          value: "$(params.image-url)"
-    - name: update-deployment
-      taskRef:
-        name: update-deployment
-      runAfter:
-        - build-and-push
-      params:
-        - name: deployment
-          value: "$(params.deployment-name)"
-        - name: image
-          value: "$(params.image-url):$(params.image-tag)"
-        - name: namespace
-          value: "$(params.namespace)"
+      description: The image name to build and push
+  steps:
+    - name: clone-build-push
+      image: gcr.io/kaniko-project/executor:latest
+      script: |
+        #!/usr/bin/env sh
+        git clone $(params.git-url) /workspace/source
+        cd /workspace/source
+        kaniko --context=/workspace/source --destination=$(params.image-url) --skip-tls-verify
