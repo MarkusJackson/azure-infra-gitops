@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/MarkusJackson/azure-infra-gitops.git
+    repoURL: https://github.com/markusjackson/azure-infra-gitops.git
     targetRevision: main
     path: 4-helm-charts-and-manifests/tekton-resources-manifests
     directory:
