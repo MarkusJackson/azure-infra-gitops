@@ -20,15 +20,6 @@ spec:
           value: "$(params.gitrepositoryurl)"
         - name: image-url
           value: "$(params.image-url)"
-      podTemplate:
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          capabilities:
-            drop:
-              - ALL
     - name: update-deployment
       taskRef:
         name: update-deployment
@@ -41,12 +32,3 @@ spec:
           value: "$(params.image-url):$(params.image-tag)"
         - name: namespace
           value: "$(params.namespace)"
-      podTemplate:
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          seccompProfile:
-            type: RuntimeDefault
-          capabilities:
-            drop:
-              - ALL
