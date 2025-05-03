@@ -9,9 +9,12 @@ spec:
       description: The URL of the Git repository
     - name: image-url
       description: The image name to build and push
+  workspaces:
+    - name: source
+      description: Workspace to store the cloned repository
   steps:
-    - name: clone-build-push
-      image: gcr.io/kaniko-project/executor:latest
+    - name: clone
+      image: alpine/git:latest
       env:
         - name: GIT_CREDENTIALS
           valueFrom:
@@ -19,7 +22,22 @@ spec:
               name: git-credentials
               key: password
       script: |
-        #!/usr/bin/env sh
+        #!/bin/sh
+        echo "Starting git clone..."
+        echo "GIT_CREDENTIALS is set: $(if [ -n \"$GIT_CREDENTIALS\" ]; then echo 'yes'; else echo 'no'; fi)"
         git clone https://$(GIT_CREDENTIALS)@github.com/MarkusJackson/hello-world-microservice.git /workspace/source
-        cd /workspace/source
-        kaniko --context=/workspace/source --destination=$(params.image-url) --skip-tls-verify
+        if [ $? -eq 0 ]; then
+          echo "Git clone successful!"
+        else
+          echo "Git clone failed with exit code $?"
+          exit 1
+        fi
+    - name: build-and-push
+      image: gcr.io/kaniko-project/executor:latest
+      workingDir: /workspace/source
+      command:
+        - /kaniko/executor
+      args:
+        - --context=/workspace/source
+        - --destination=$(params.image-url)
+        - --skip-tls-verify
