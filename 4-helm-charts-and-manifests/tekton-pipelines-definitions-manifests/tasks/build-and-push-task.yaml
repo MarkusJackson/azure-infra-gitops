@@ -23,7 +23,7 @@ spec:
               key: password
       script: |
         #!/bin/sh
-        echo "Starting git clone..."
+        echo "Starting git clone...."
         echo "GIT_CREDENTIALS is set: $(if [ -n \"$GIT_CREDENTIALS\" ]; then echo 'yes'; else echo 'no'; fi)"
         REPO_URL="https://${GIT_CREDENTIALS}@github.com/markusjackson/hello-world-microservice.git"
         echo "Cloning from $REPO_URL (credentials masked)"
