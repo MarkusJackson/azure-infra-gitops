@@ -1,36 +1,34 @@
 apiVersion: tekton.dev/v1beta1
-kind: Task
+kind: Pipeline
 metadata:
-  name: build-and-push
+  name: hello-world-microservice-pipeline
   namespace: tekton-pipelines
 spec:
   params:
-    - name: git-url  # URL des Git-Repositories
-      type: string
-    - name: git-revision  # Revision (z. B. Branch) des Repositories
-      type: string
-      default: "main"
-    - name: image-url  # URL des Images in der Container Registry (z. B. docker.io/markusjackson/hello-world-microservice)
-      type: string
-    - name: image-tag  # Tag des Images
-      type: string
-      default: "latest"
-    - name: context-dir  # Verzeichnis im Repository, wo das Dockerfile liegt
-      type: string
-      default: "."
-  workspaces:
-    - name: source  # Arbeitsbereich für den Quellcode
-  steps:
-    - name: clone  # Schritt 1: Klonen des Quellcodes
-      image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init:v0.40.2
-      script: |
-        /ko-app/git-init -url=$(params.git-url) -revision=$(params.git-revision) -path=/workspace/source
-    - name: build-and-push  # Schritt 2: Bauen und Pushen des Images
-      image: gcr.io/kaniko-project/executor:latest
-      env:
-        - name: DOCKER_CONFIG  # Verzeichnis für Docker-Zugangsdaten
-          value: /tekton/home/.docker
-      args:
-        - --context=/workspace/source/$(params.context-dir)
-        - --destination=$(params.image-url):$(params.image-tag)
-        - --dockerfile=/workspace/source/$(params.context-dir)/Dockerfile
+    - name: gitrevision
+    - name: gitrepositoryurl
+    - name: image-url
+    - name: image-tag
+    - name: deployment-name
+    - name: namespace
+  tasks:
+    - name: build-and-push
+      taskRef:
+        name: build-and-push
+      params:
+        - name: image-url
+          value: "$(params.image-url):$(params.image-tag)"
+        - name: git-url
+          value: "$(params.gitrepositoryurl)"
+    - name: update-deployment
+      taskRef:
+        name: update-deployment
+      runAfter:
+        - build-and-push
+      params:
+        - name: deployment
+          value: "$(params.deployment-name)"
+        - name: image
+          value: "$(params.image-url):$(params.image-tag)"
+        - name: namespace
+          value: "$(params.namespace)"
