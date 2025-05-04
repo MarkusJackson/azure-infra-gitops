@@ -1,0 +1,18 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: transform-image-url-task
+  namespace: tekton-pipelines
+spec:
+  params:
+    - name: image-url
+      description: The image URL to transform to lowercase
+  results:
+    - name: lowercase-image-url
+      description: The transformed image URL in lowercase
+  steps:
+    - name: transform
+      image: alpine:latest
+      script: |
+        #!/bin/sh
+        echo "$(params.image-url)" | tr '[:upper:]' '[:lower:]' | tee /tekton/results/lowercase-image-url
