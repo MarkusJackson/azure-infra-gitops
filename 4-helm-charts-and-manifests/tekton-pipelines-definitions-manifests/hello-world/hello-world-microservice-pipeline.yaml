@@ -17,7 +17,7 @@ spec:
   tasks:
     - name: transform-image-url
       taskRef:
-        name: transform-image-url-task.yaml
+        name: transform-image-url-task
       params:
         - name: image-url
           value: "$(params.image-url)"
