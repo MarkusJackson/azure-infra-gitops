@@ -1,58 +1,58 @@
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: build-and-push
-  namespace: tekton-pipelines
-spec:
-  params:
-    - name: git-url
-      description: The URL of the Git repository
-    - name: image-url
-      description: The image name to build and push
-  workspaces:
-    - name: source
-      description: Workspace to store the cloned repository
-  volumes:
-    - name: docker-credentials
-      secret:
-        secretName: docker-credentials
-  steps:
-    - name: clone
-      image: alpine/git:latest
-      env:
-        - name: GIT_CREDENTIALS
-          valueFrom:
-            secretKeyRef:
-              name: git-credentials
-              key: password
-      script: |
-        #!/bin/sh
-        echo "Starting git clone...."
-        echo "GIT_CREDENTIALS is set: $(if [ -n \"$GIT_CREDENTIALS\" ]; then echo 'yes'; else echo 'no'; fi)"
-        REPO_URL="https://${GIT_CREDENTIALS}@github.com/markusjackson/hello-world-microservice.git"
-        echo "Cloning from $REPO_URL (credentials masked)"
-        git clone "$REPO_URL" /workspace/source
-        if [ $? -eq 0 ]; then
-          echo "Git clone successful!"
-        else
-          echo "Git clone failed with exit code $?"
-          exit 1
-        fi
-    - name: build-and-push
-      image: gcr.io/kaniko-project/executor:latest
-      workingDir: /workspace/source
-      command:
-        - /kaniko/executor
-      args:
-        - --context=/workspace/source
-        - --destination=$(params.image-url)
-        - --skip-tls-verify
-        - --verbosity=debug
-        - --log-format=text
-      env:
-        - name: DOCKER_CONFIG
-          value: /tekton/creds
-      volumeMounts:
-        - name: docker-credentials
-          mountPath: /tekton/creds
-          readOnly: true
+  apiVersion: tekton.dev/v1beta1
+  kind: Task
+  metadata:
+    name: build-and-push
+    namespace: tekton-pipelines
+  spec:
+    params:
+      - name: git-url
+        description: The URL of the Git repository
+      - name: image-url
+        description: The image name to build and push
+    workspaces:
+      - name: source
+        description: Workspace to store the cloned repository
+    volumes:
+      - name: docker-credentials
+        secret:
+          secretName: docker-credentials
+    steps:
+      - name: clone
+        image: alpine/git:latest
+        env:
+          - name: GIT_CREDENTIALS
+            valueFrom:
+              secretKeyRef:
+                name: git-credentials
+                key: password
+        script: |
+          #!/bin/sh
+          echo "Starting git clone...."
+          echo "GIT_CREDENTIALS is set: $(if [ -n \"$GIT_CREDENTIALS\" ]; then echo 'yes'; else echo 'no'; fi)"
+          REPO_URL="https://${GIT_CREDENTIALS}@github.com/markusjackson/hello-world-microservice.git"
+          echo "Cloning from $REPO_URL (credentials masked)"
+          git clone "$REPO_URL" /workspace/source
+          if [ $? -eq 0 ]; then
+            echo "Git clone successful!"
+          else
+            echo "Git clone failed with exit code $?"
+            exit 1
+          fi
+      - name: build-and-push
+        image: gcr.io/kaniko-project/executor:latest
+        workingDir: /workspace/source
+        command:
+          - /kaniko/executor
+        args:
+          - --context=/workspace/source
+          - --destination=$(params.image-url)
+          - --skip-tls-verify
+          - --verbosity=debug
+          - --log-format=text
+        env:
+          - name: DOCKER_CONFIG
+            value: /kaniko/docker-credentials
+        volumeMounts:
+          - name: docker-credentials
+            mountPath: /kaniko/docker-credentials
+            readOnly: true
