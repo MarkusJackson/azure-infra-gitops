@@ -20,6 +20,7 @@ spec:
         generateName: pipeline-run-
         namespace: $(tt.params.pipelineNamespace)
       spec:
+        serviceAccountName: tekton-build
         pipelineRef:
           name: $(tt.params.pipelineName)
         params:
