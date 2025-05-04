@@ -1,7 +1,7 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: hello-world-github-listener
+  name: hello-world-github-eventlistener
   namespace: tekton-pipelines
 spec:
   serviceAccountName: tekton-build
